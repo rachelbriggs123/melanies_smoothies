@@ -53,7 +53,7 @@ import pandas as pd
 import streamlit as st
 
 # Define the API URL
-api_url = "https://my.smoothieroot.com/api/fruit/watermelon"
+api_url = "https://my.smoothiefroot.com/api/fruit/orange"
 
 # Attempt to fetch data from the SmoothieRoot API
 try:
