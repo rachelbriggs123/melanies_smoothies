@@ -48,18 +48,19 @@ if ingredients_list:
                 # Extract general information (non-nutrition details)
                 general_info = {k: v for k, v in smoothiefroot_data.items() if k != 'nutrition'}
                 
-                # Process the nutrition data to display each nutrient in its own row
+                # Process the nutrition data to expand each nutrient into its own row
                 if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
-                    nutrition_data = pd.DataFrame(
-                        [{'type': nutrient, 'value': amount} for nutrient, amount in smoothiefroot_data['nutrition'].items()]
-                    )
+                    # Flatten nutrition data by combining it with general info in each row
+                    nutrition_data = pd.DataFrame([
+                        {**general_info, 'type': nutrient, 'value': amount}
+                        for nutrient, amount in smoothiefroot_data['nutrition'].items()
+                    ])
                 else:
-                    nutrition_data = pd.DataFrame(columns=['type', 'value'])  # Empty DataFrame if no nutrition data
+                    # Create an empty DataFrame if no nutrition data
+                    nutrition_data = pd.DataFrame(columns=list(general_info.keys()) + ['type', 'value'])
 
-                # Combine general information and nutrition data for display
-                general_info_df = pd.DataFrame([general_info])  # Convert general info to DataFrame
-                st.dataframe(general_info_df, use_container_width=True)  # Display general information
-                st.dataframe(nutrition_data, use_container_width=True)  # Display nutrition information in separate rows
+                # Display the formatted DataFrame
+                st.dataframe(nutrition_data, use_container_width=True)
             else:
                 st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
         except Exception as e:
@@ -83,7 +84,6 @@ if time_to_insert:
         st.success(f"Your Smoothie is ordered, {name_on_order}!", icon="✅")
     else:
         st.warning("Please enter a name and select at least one ingredient for your smoothie.")
-
 
 
 
