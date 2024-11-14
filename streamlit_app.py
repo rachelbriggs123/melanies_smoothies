@@ -31,9 +31,18 @@ if ingredients_list:
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
 
-    # Example API request to get nutrition information for the first selected ingredient
-    smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon")
-    sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+        # Display each fruit's nutrition information
+        st.subheader(f"{fruit_chosen} Nutrition Information")
+        try:
+            smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon")
+            if smoothiefroot_response.status_code == 200:
+                smoothiefroot_data = smoothiefroot_response.json()
+                # Display the nutrition information in a DataFrame
+                st.dataframe(data=smoothiefroot_data, use_container_width=True)
+            else:
+                st.error(f"Sorry, data for {fruit_chosen} is not available in the Fruitvice database.")
+        except Exception as e:
+            st.error(f"Failed to retrieve data for {fruit_chosen}: {e}")
 
 # Display the SQL statement for debugging purposes (optional)
 my_insert_stmt = f"""
