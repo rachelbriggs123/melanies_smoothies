@@ -62,18 +62,16 @@ if ingredients_list:
                             'name': general_info.get('name'),
                             'nutrition': smoothiefroot_data['nutrition'].get(nutrient, None),
                             'order': general_info.get('order'),
-                            'type': nutrient
                         }
                         for nutrient in nutrition_order if nutrient in smoothiefroot_data['nutrition']
-                    ])
+                    ], index=nutrition_order)
                     
                     # Reorder columns to match the required format
-                    nutrition_data = nutrition_data[['type', 'family', 'genus', 'id', 'name', 'nutrition', 'order']]
-                    nutrition_data.rename(columns={'type': 'type'}, inplace=True)
+                    nutrition_data = nutrition_data[['family', 'genus', 'id', 'name', 'nutrition', 'order']]
 
                 else:
                     # Create an empty DataFrame if no nutrition data
-                    nutrition_data = pd.DataFrame(columns=['type', 'family', 'genus', 'id', 'name', 'nutrition', 'order'])
+                    nutrition_data = pd.DataFrame(columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
 
                 # Display the formatted DataFrame
                 st.dataframe(nutrition_data, use_container_width=True)
