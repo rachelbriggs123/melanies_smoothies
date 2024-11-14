@@ -1,4 +1,3 @@
-
 # Import necessary packages
 import streamlit as st
 from snowflake.snowpark.functions import col
@@ -74,7 +73,22 @@ if ingredients_list:
 
                 else:
                     # Create an empty DataFrame if no nutrition data
-                    nutrition_data = pd.DataFrame(columns=['type', 'family', 'genus', 'id', 'name', '
+                    nutrition_data = pd.DataFrame(columns=['type', 'family', 'genus', 'id', 'name', 'nutrition', 'order'])
+
+                # Display the formatted DataFrame
+                st.dataframe(nutrition_data, use_container_width=True)
+            else:
+                st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
+        except Exception as e:
+            st.error(f"Failed to retrieve data for {fruit_chosen}: {e}")
+else:
+    st.warning("Please select at least one ingredient.")
+
+# Display the SQL statement for debugging purposes (optional)
+my_insert_stmt = f"""
+    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
+    VALUES ('{ingredients_string.strip()}', '{name_on_order}')
+"""
 
 # Button to submit the order
 time_to_insert = st.button('Submit Order')
