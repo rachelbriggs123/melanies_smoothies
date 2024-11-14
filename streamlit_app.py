@@ -41,7 +41,7 @@ if ingredients_list:
         st.subheader(f"{fruit_chosen} Nutrition Information")
         try:
             # Use SEARCH_ON value for the API request to my.smoothiefroot.com
-            smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon")
+            smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")
             if smoothiefroot_response.status_code == 200:
                 smoothiefroot_data = smoothiefroot_response.json()
                 
@@ -79,7 +79,6 @@ if time_to_insert:
         st.success(f"Your Smoothie is ordered, {name_on_order}!", icon="✅")
     else:
         st.warning("Please enter a name and select at least one ingredient for your smoothie.")
-
 
 
 
