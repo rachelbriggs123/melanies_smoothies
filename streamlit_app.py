@@ -72,14 +72,18 @@ if ingredients_list:
                         }
                         nutrition_data.append(row_data)
                 
-                # Convert list of dictionaries to DataFrame
-                nutrition_df = pd.DataFrame(nutrition_data)
+                # Ensure nutrition_data is not empty, otherwise create an empty DataFrame with the required columns
+                if nutrition_data:
+                    nutrition_df = pd.DataFrame(nutrition_data)
+                else:
+                    # If there's no nutrition data, create an empty DataFrame with the specified columns
+                    nutrition_df = pd.DataFrame(columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
                 
                 # Ensure the DataFrame has the correct columns in the specified order
                 nutrition_df = nutrition_df[['family', 'genus', 'id', 'name', 'nutrition', 'order']]
                 
                 # Set the index to nutrition type for row labels
-                nutrition_df.index = nutrition_order
+                nutrition_df.index = nutrition_order[:len(nutrition_df)]  # Ensure index length matches data
                 
                 # Display the formatted DataFrame
                 st.dataframe(nutrition_df, use_container_width=True)
@@ -106,6 +110,7 @@ if time_to_insert:
         st.success(f"Your Smoothie is ordered, {name_on_order}!", icon="✅")
     else:
         st.warning("Please enter a name and select at least one ingredient for your smoothie.")
+
 
 
 
