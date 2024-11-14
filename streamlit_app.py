@@ -49,7 +49,35 @@ if time_to_insert:
 
 # New section to display SmoothieRoot nutrition information
 import requests
-smoothieroot_response = requests.get("https://my.smoothieroot.com/api/fruit/watermelon")
-# st.text(smoothieroot_response.json())
-sf_df = st.dataframe(data=smoothieroot_response.json(), use_container_width=True)
+import pandas as pd
+import streamlit as st
+
+# Define the API URL
+api_url = "https://my.smoothieroot.com/api/fruit/watermelon"
+
+# Attempt to fetch data from the SmoothieRoot API
+try:
+    smoothieroot_response = requests.get(api_url)
+    smoothieroot_response.raise_for_status()  # Raise an error if the request failed
+
+    # Parse the JSON response
+    data = smoothieroot_response.json()
+
+    # Convert the JSON data into a pandas DataFrame
+    if isinstance(data, dict) and "nutrition" in data:
+        # If the data is a dictionary with a "nutrition" key, extract that portion
+        nutrition_data = data["nutrition"]
+        sf_df = pd.DataFrame(nutrition_data)
+    else:
+        # If the data structure is different, just convert the whole JSON
+        sf_df = pd.DataFrame(data)
+
+    # Display the DataFrame in Streamlit
+    st.dataframe(sf_df, use_container_width=True)
+
+except requests.exceptions.RequestException as e:
+    st.error(f"Error fetching data from SmoothieRoot API: {e}")
+except ValueError as ve:
+    st.error(f"Error parsing JSON response: {ve}")
+
 
