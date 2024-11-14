@@ -1,3 +1,4 @@
+
 # Import necessary packages
 import streamlit as st
 from snowflake.snowpark.functions import col
@@ -48,31 +49,32 @@ if ingredients_list:
                 # Extract general information (non-nutrition details)
                 general_info = {k: v for k, v in smoothiefroot_data.items() if k != 'nutrition'}
                 
+                # Define the order of nutrition fields
+                nutrition_order = ["carbs", "fat", "protein", "sugar"]
+                
                 # Process the nutrition data to expand each nutrient into its own row
                 if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
                     # Flatten nutrition data by combining it with general info in each row
                     nutrition_data = pd.DataFrame([
-                        {**general_info, 'type': nutrient, 'value': amount}
-                        for nutrient, amount in smoothiefroot_data['nutrition'].items()
+                        {
+                            'family': general_info.get('family'),
+                            'genus': general_info.get('genus'),
+                            'id': general_info.get('id'),
+                            'name': general_info.get('name'),
+                            'nutrition': smoothiefroot_data['nutrition'].get(nutrient, None),
+                            'order': general_info.get('order'),
+                            'type': nutrient
+                        }
+                        for nutrient in nutrition_order if nutrient in smoothiefroot_data['nutrition']
                     ])
+                    
+                    # Reorder columns to match the required format
+                    nutrition_data = nutrition_data[['type', 'family', 'genus', 'id', 'name', 'nutrition', 'order']]
+                    nutrition_data.rename(columns={'type': 'type'}, inplace=True)
+
                 else:
                     # Create an empty DataFrame if no nutrition data
-                    nutrition_data = pd.DataFrame(columns=list(general_info.keys()) + ['type', 'value'])
-
-                # Display the formatted DataFrame
-                st.dataframe(nutrition_data, use_container_width=True)
-            else:
-                st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
-        except Exception as e:
-            st.error(f"Failed to retrieve data for {fruit_chosen}: {e}")
-else:
-    st.warning("Please select at least one ingredient.")
-
-# Display the SQL statement for debugging purposes (optional)
-my_insert_stmt = f"""
-    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-    VALUES ('{ingredients_string.strip()}', '{name_on_order}')
-"""
+                    nutrition_data = pd.DataFrame(columns=['type', 'family', 'genus', 'id', 'name', '
 
 # Button to submit the order
 time_to_insert = st.button('Submit Order')
