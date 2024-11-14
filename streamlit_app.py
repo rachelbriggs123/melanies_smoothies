@@ -45,17 +45,21 @@ if ingredients_list:
             if smoothiefroot_response.status_code == 200:
                 smoothiefroot_data = smoothiefroot_response.json()
                 
-                # Ensure 'nutrition' displays only a number
-                if 'nutrition' in smoothiefroot_data:
-                    # If 'nutrition' contains nested data or isn't a number, simplify it
-                    if isinstance(smoothiefroot_data['nutrition'], dict):
-                        smoothiefroot_data['nutrition'] = smoothiefroot_data['nutrition'].get('value', 0)
-                    elif not isinstance(smoothiefroot_data['nutrition'], (int, float)):
-                        smoothiefroot_data['nutrition'] = float(smoothiefroot_data['nutrition'])
+                # Extract general information (non-nutrition details)
+                general_info = {k: v for k, v in smoothiefroot_data.items() if k != 'nutrition'}
                 
-                # Display the nutrition information in a DataFrame
-                fv_df = pd.DataFrame([smoothiefroot_data])  # Convert to DataFrame for display
-                st.dataframe(fv_df, use_container_width=True)
+                # Process the nutrition data to display each nutrient in its own row
+                if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
+                    nutrition_data = pd.DataFrame(
+                        [{'type': nutrient, 'value': amount} for nutrient, amount in smoothiefroot_data['nutrition'].items()]
+                    )
+                else:
+                    nutrition_data = pd.DataFrame(columns=['type', 'value'])  # Empty DataFrame if no nutrition data
+
+                # Combine general information and nutrition data for display
+                general_info_df = pd.DataFrame([general_info])  # Convert general info to DataFrame
+                st.dataframe(general_info_df, use_container_width=True)  # Display general information
+                st.dataframe(nutrition_data, use_container_width=True)  # Display nutrition information in separate rows
             else:
                 st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
         except Exception as e:
