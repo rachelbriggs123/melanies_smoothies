@@ -40,28 +40,33 @@ if ingredients_list:
         # Retrieve the corresponding SEARCH_ON value
         search_on = fruit_df.loc[fruit_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
 
-        # Display each fruit's nutrition information
-st.subheader(f"{fruit_chosen} Nutrition Information")
-try:
-    # Use SEARCH_ON value for the API request to my.smoothiefroot.com
-    smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon")
-    if smoothiefroot_response.status_code == 200:
-        smoothiefroot_data = smoothiefroot_response.json()
-        
-        # If 'nutrition' is a dictionary or contains more than just a number, simplify it to a number
-        if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
-            smoothiefroot_data['nutrition'] = smoothiefroot_data['nutrition'].get('value', 0)  # Use 0 as default if 'value' is missing
-        elif 'nutrition' in smoothiefroot_data and not isinstance(smoothiefroot_data['nutrition'], (int, float)):
-            smoothiefroot_data['nutrition'] = float(smoothiefroot_data['nutrition'])  # Convert to a number if it's in string format
-        
-        # Display the nutrition information in a DataFrame
-        fv_df = pd.DataFrame([smoothiefroot_data])  # Convert to DataFrame for display
-        st.dataframe(fv_df, use_container_width=True)
-    else:
-        st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
-except Exception as e:
-    st.error(f"Failed to retrieve data for {fruit_chosen}: {e}")
 
+
+        # Display each fruit's nutrition information
+ st.subheader(f"{fruit_chosen} Nutrition Information")
+        try:
+            # Use SEARCH_ON value for the API request to my.smoothiefroot.com
+            smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")
+            if smoothiefroot_response.status_code == 200:
+                smoothiefroot_data = smoothiefroot_response.json()
+                
+                # Ensure 'nutrition' displays only a number
+                if 'nutrition' in smoothiefroot_data:
+                    # If 'nutrition' contains nested data or isn't a number, simplify it
+                    if isinstance(smoothiefroot_data['nutrition'], dict):
+                        smoothiefroot_data['nutrition'] = smoothiefroot_data['nutrition'].get('value', 0)
+                    elif not isinstance(smoothiefroot_data['nutrition'], (int, float)):
+                        smoothiefroot_data['nutrition'] = float(smoothiefroot_data['nutrition'])
+                
+                # Display the nutrition information in a DataFrame
+                fv_df = pd.DataFrame([smoothiefroot_data])  # Convert to DataFrame for display
+                st.dataframe(fv_df, use_container_width=True)
+            else:
+                st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
+        except Exception as e:
+            st.error(f"Failed to retrieve data for {fruit_chosen}: {e}")
+else:
+    st.warning("Please select at least one ingredient.")
 
 # Display the SQL statement for debugging purposes (optional)
 my_insert_stmt = f"""
