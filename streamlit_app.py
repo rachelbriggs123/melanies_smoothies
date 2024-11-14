@@ -47,7 +47,9 @@ if time_to_insert:
     else:
         st.warning("Please enter a name and select at least one ingredient for your smoothie.")
 
-#New section to display Smoothiefroot information
+# New section to display SmoothieRoot nutrition information
 import requests
-smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
-st.text(smoothiefroot_response).json()
+smoothieroot_response = requests.get("https://my.smoothieroot.com/api/fruit/watermelon")
+# st.text(smoothieroot_response.json())
+sf_df = st.dataframe(data=smoothieroot_response.json(), use_container_width=True)
+
