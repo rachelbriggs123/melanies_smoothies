@@ -17,7 +17,7 @@ session = cnx.session()
 # Fetch available fruit options from the database
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'), col('SEARCH_ON')).collect()
 fruit_options = [row['FRUIT_NAME'] for row in my_dataframe]  # Extract fruit names for selection
-st.stop()
+# st.stop()
 
 
 # Multi-select box for ingredients with a maximum of 5 selections
@@ -32,6 +32,8 @@ ingredients_string = ''  # Initialize the string to avoid NameError
 if ingredients_list:
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
+        search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+        st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
 
         # Display each fruit's nutrition information
         st.subheader(f"{fruit_chosen} Nutrition Information")
