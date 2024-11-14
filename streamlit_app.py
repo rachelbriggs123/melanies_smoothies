@@ -46,7 +46,13 @@ if ingredients_list:
                 smoothiefroot_data = smoothiefroot_response.json()
                 
                 # Extract general information (non-nutrition details)
-                general_info = {k: v for k, v in smoothiefroot_data.items() if k != 'nutrition'}
+                general_info = {
+                    'family': smoothiefroot_data.get('family', 'Unknown'),
+                    'genus': smoothiefroot_data.get('genus', 'Unknown'),
+                    'id': smoothiefroot_data.get('id', 'Unknown'),
+                    'name': smoothiefroot_data.get('name', 'Unknown'),
+                    'order': smoothiefroot_data.get('order', 'Unknown')
+                }
                 
                 # Define the specific order of nutrients to display
                 nutrition_order = ["carbs", "fat", "protein", "sugar"]
@@ -55,19 +61,22 @@ if ingredients_list:
                 nutrition_data = []
                 if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
                     for nutrient in nutrition_order:
-                        if nutrient in smoothiefroot_data['nutrition']:
-                            row_data = {
-                                'family': general_info.get('family', 'Unknown'),
-                                'genus': general_info.get('genus', 'Unknown'),
-                                'id': general_info.get('id', 'Unknown'),
-                                'name': general_info.get('name', 'Unknown'),
-                                'nutrition': smoothiefroot_data['nutrition'][nutrient],
-                                'order': general_info.get('order', 'Unknown')
-                            }
-                            nutrition_data.append(row_data)
+                        # Check if nutrient exists in the data, else set it to None
+                        row_data = {
+                            'family': general_info['family'],
+                            'genus': general_info['genus'],
+                            'id': general_info['id'],
+                            'name': general_info['name'],
+                            'nutrition': smoothiefroot_data['nutrition'].get(nutrient, None),
+                            'order': general_info['order']
+                        }
+                        nutrition_data.append(row_data)
                 
-                # Convert to DataFrame with the specified column order
-                nutrition_df = pd.DataFrame(nutrition_data, columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
+                # Convert list of dictionaries to DataFrame
+                nutrition_df = pd.DataFrame(nutrition_data)
+                
+                # Ensure the DataFrame has the correct columns in the specified order
+                nutrition_df = nutrition_df[['family', 'genus', 'id', 'name', 'nutrition', 'order']]
                 
                 # Set the index to nutrition type for row labels
                 nutrition_df.index = nutrition_order
