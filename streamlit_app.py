@@ -52,34 +52,33 @@ if ingredients_list:
                 nutrition_order = ["carbs", "fat", "protein", "sugar"]
                 
                 # Process the nutrition data to expand each nutrient into its own row
-if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
-    # Define the columns expected for each row in the DataFrame
-    columns = ['family', 'genus', 'id', 'name', 'nutrition', 'order']
-    
-    # Flatten nutrition data by combining it with general info in each row
-    nutrition_data = []
-    for nutrient, amount in smoothiefroot_data['nutrition'].items():
-        # Add default values if any expected field is missing
-        row_data = {
-            'family': general_info.get('family', 'Unknown'),
-            'genus': general_info.get('genus', 'Unknown'),
-            'id': general_info.get('id', 'Unknown'),
-            'name': general_info.get('name', 'Unknown'),
-            'nutrition': amount,
-            'order': general_info.get('order', 'Unknown')
-        }
-        # Append the row to the list
-        nutrition_data.append(row_data)
-    
-    # Convert list of dictionaries to DataFrame
-    nutrition_df = pd.DataFrame(nutrition_data, columns=columns)
-else:
-    # Create an empty DataFrame if no nutrition data
-    nutrition_df = pd.DataFrame(columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
-
+                if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
+                    # Define the columns expected for each row in the DataFrame
+                    columns = ['family', 'genus', 'id', 'name', 'nutrition', 'order']
+                    
+                    # Flatten nutrition data by combining it with general info in each row
+                    nutrition_data = []
+                    for nutrient, amount in smoothiefroot_data['nutrition'].items():
+                        # Add default values if any expected field is missing
+                        row_data = {
+                            'family': general_info.get('family', 'Unknown'),
+                            'genus': general_info.get('genus', 'Unknown'),
+                            'id': general_info.get('id', 'Unknown'),
+                            'name': general_info.get('name', 'Unknown'),
+                            'nutrition': amount,
+                            'order': general_info.get('order', 'Unknown')
+                        }
+                        # Append the row to the list
+                        nutrition_data.append(row_data)
+                    
+                    # Convert list of dictionaries to DataFrame
+                    nutrition_df = pd.DataFrame(nutrition_data, columns=columns)
+                else:
+                    # Create an empty DataFrame if no nutrition data
+                    nutrition_df = pd.DataFrame(columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
 
                 # Display the formatted DataFrame
-                st.dataframe(nutrition_data, use_container_width=True)
+                st.dataframe(nutrition_df, use_container_width=True)
             else:
                 st.error(f"Sorry, data for {fruit_chosen} is not available in the Smoothiefroot database.")
         except Exception as e:
