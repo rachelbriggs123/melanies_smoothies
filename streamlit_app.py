@@ -21,9 +21,6 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT
 fruit_df = pd.DataFrame(my_dataframe)  # Convert to DataFrame for easy manipulation
 fruit_options = fruit_df['FRUIT_NAME'].tolist()  # Extract fruit names for selection
 
-# Display the DataFrame for debugging purposes (optional)
-# st.dataframe(fruit_df)
-
 # Multi-select box for ingredients with a maximum of 5 selections
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
@@ -41,7 +38,7 @@ if ingredients_list:
         search_on = fruit_df.loc[fruit_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
 
         # Display each fruit's nutrition information
- st.subheader(f"{fruit_chosen} Nutrition Information")
+        st.subheader(f"{fruit_chosen} Nutrition Information")
         try:
             # Use SEARCH_ON value for the API request to my.smoothiefroot.com
             smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon")
