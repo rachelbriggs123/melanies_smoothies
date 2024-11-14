@@ -66,9 +66,12 @@ if ingredients_list:
                             }
                             nutrition_data.append(row_data)
                 
-                # Create a DataFrame with the specified column order
+                # Convert to DataFrame with the specified column order
                 nutrition_df = pd.DataFrame(nutrition_data, columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
-
+                
+                # Set the index to nutrition type for row labels
+                nutrition_df.index = nutrition_order
+                
                 # Display the formatted DataFrame
                 st.dataframe(nutrition_df, use_container_width=True)
             else:
@@ -94,6 +97,7 @@ if time_to_insert:
         st.success(f"Your Smoothie is ordered, {name_on_order}!", icon="✅")
     else:
         st.warning("Please enter a name and select at least one ingredient for your smoothie.")
+
 
 
 
