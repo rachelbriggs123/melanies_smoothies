@@ -52,8 +52,7 @@ import requests
 
 smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
 smoothiefroot_data = smoothiefroot_response.json()  # Extract JSON data
-# st.text(smoothiefroot_data)  # Display JSON data as text
-sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=true
+st.text(smoothiefroot_data)  # Display JSON data as text
 
 
 
