@@ -46,7 +46,7 @@ if ingredients_list:
     # Example API request to get nutrition information for the first selected ingredient
     first_ingredient = ingredients_list[0]
     try:
-        smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{first_ingredient.lower()}")
+        smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon()}")
         smoothiefroot_data = smoothiefroot_response.json()
 
         # Display the nutrition information in a DataFrame
