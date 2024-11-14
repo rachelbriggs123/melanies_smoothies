@@ -40,13 +40,11 @@ if ingredients_list:
         # Retrieve the corresponding SEARCH_ON value
         search_on = fruit_df.loc[fruit_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
 
-
-
         # Display each fruit's nutrition information
  st.subheader(f"{fruit_chosen} Nutrition Information")
         try:
             # Use SEARCH_ON value for the API request to my.smoothiefroot.com
-            smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")
+            smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/watermelon")
             if smoothiefroot_response.status_code == 200:
                 smoothiefroot_data = smoothiefroot_response.json()
                 
