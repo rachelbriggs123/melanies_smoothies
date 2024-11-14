@@ -48,34 +48,26 @@ if ingredients_list:
                 # Extract general information (non-nutrition details)
                 general_info = {k: v for k, v in smoothiefroot_data.items() if k != 'nutrition'}
                 
-                # Define the order of nutrition fields
+                # Define the specific order of nutrients to display
                 nutrition_order = ["carbs", "fat", "protein", "sugar"]
                 
-                # Process the nutrition data to expand each nutrient into its own row
+                # Prepare the nutrition data for display, ensuring the specified order
+                nutrition_data = []
                 if 'nutrition' in smoothiefroot_data and isinstance(smoothiefroot_data['nutrition'], dict):
-                    # Define the columns expected for each row in the DataFrame
-                    columns = ['family', 'genus', 'id', 'name', 'nutrition', 'order']
-                    
-                    # Flatten nutrition data by combining it with general info in each row
-                    nutrition_data = []
-                    for nutrient, amount in smoothiefroot_data['nutrition'].items():
-                        # Add default values if any expected field is missing
-                        row_data = {
-                            'family': general_info.get('family', 'Unknown'),
-                            'genus': general_info.get('genus', 'Unknown'),
-                            'id': general_info.get('id', 'Unknown'),
-                            'name': general_info.get('name', 'Unknown'),
-                            'nutrition': amount,
-                            'order': general_info.get('order', 'Unknown')
-                        }
-                        # Append the row to the list
-                        nutrition_data.append(row_data)
-                    
-                    # Convert list of dictionaries to DataFrame
-                    nutrition_df = pd.DataFrame(nutrition_data, columns=columns)
-                else:
-                    # Create an empty DataFrame if no nutrition data
-                    nutrition_df = pd.DataFrame(columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
+                    for nutrient in nutrition_order:
+                        if nutrient in smoothiefroot_data['nutrition']:
+                            row_data = {
+                                'family': general_info.get('family', 'Unknown'),
+                                'genus': general_info.get('genus', 'Unknown'),
+                                'id': general_info.get('id', 'Unknown'),
+                                'name': general_info.get('name', 'Unknown'),
+                                'nutrition': smoothiefroot_data['nutrition'][nutrient],
+                                'order': general_info.get('order', 'Unknown')
+                            }
+                            nutrition_data.append(row_data)
+                
+                # Create a DataFrame with the specified column order
+                nutrition_df = pd.DataFrame(nutrition_data, columns=['family', 'genus', 'id', 'name', 'nutrition', 'order'])
 
                 # Display the formatted DataFrame
                 st.dataframe(nutrition_df, use_container_width=True)
