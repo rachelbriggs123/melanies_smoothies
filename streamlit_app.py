@@ -13,38 +13,32 @@ st.write('The name on your Smoothie will be:', name_on_order)
 
 # Get the active Snowflake session
 session = get_active_session()
-my_dataframe = session.table("smoothies.public.fruit_options")
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 st.dataframe(data=my_dataframe,use_container_width=true)
 
 # Multi-select box for ingredients with a maximum of 5 selections
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
-    options=fruit_options,
-    max_selections=5
+    my_dataframe
 )
 
-# Construct the ingredients string from the selected list
-if ingredients_list:
-    ingredients_string = " ".join(ingredients_list)
-else:
-    ingredients_string = ""
+If ingredients_list:
+    st.write(ingredients_list)
+    st.text(ingredients_list)
+    ingredients_string = ''
 
-# Display the SQL statement for debugging purposes (optional)
-my_insert_stmt = f"""
-    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-    VALUES ('{ingredients_string}', '{name_on_order}')
-"""
+    for fruit_chosen in ingredients_list:
+            ingredients_string += fruit_chosen + ' '
+    #st.write(ingredients_string)
 
-# Button to submit the order
-time_to_insert = st.button('Submit Order')
+    my_insert_stmt = """ INSERT INTO smoothies.public.orders (ingredients)
+        VALUES ('""" + ingredients_string + """','"""+name_on_order+"""')"""
 
-# Insert the order into Snowflake if the button is clicked
-if time_to_insert:
-    if name_on_order and ingredients_list:  # Check if both fields are provided
+    st.write(my_insert_stmt)
+    time_to_insert = st.button('Submit Order')
+    if time_to_insert:
         session.sql(my_insert_stmt).collect()
-        st.success(f"Your Smoothie is ordered, {name_on_order}!", icon="✅")
-    else:
-        st.warning("Please enter a name and select at least one ingredient for your smoothie.")
+        st.success('Your Smoothie is ordered!', icon="✅")
 
 import requests
 smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
