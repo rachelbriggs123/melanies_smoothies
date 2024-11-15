@@ -22,7 +22,7 @@ ingredients_list = st.multiselect(
     my_dataframe
 )
 
-If ingredients_list:
+if ingredients_list:
     st.write(ingredients_list)
     st.text(ingredients_list)
     ingredients_string = ''
