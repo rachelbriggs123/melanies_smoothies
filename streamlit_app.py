@@ -13,10 +13,8 @@ st.write('The name on your Smoothie will be:', name_on_order)
 
 # Get the active Snowflake session
 session = get_active_session()
-
-# Fetch available fruit options from the database
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('fruit_name')).collect()
-fruit_options = [row['FRUIT_NAME'] for row in my_dataframe]  # Extract fruit names for selection
+my_dataframe = session.table("smoothies.public.fruit_options")
+st.dataframe(data=my_dataframe,use_container_width=true)
 
 # Multi-select box for ingredients with a maximum of 5 selections
 ingredients_list = st.multiselect(
